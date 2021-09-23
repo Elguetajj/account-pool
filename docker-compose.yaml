@@ -1,0 +1,36 @@
+version: "3"
+services: 
+
+  mysqldb:
+    image: mysql:5.7
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: 123
+    container_name: mysql_final
+    volumes:
+        - ./db/init:/docker-entrypoint-initdb.d/:ro
+    ports:
+        - 3306:3306
+    networks:
+        - wallet_pool_net
+  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+    - 8383:8080
+    networks: 
+    - wallet_pool_net
+
+  api:
+    build: ./src
+    ports:
+      - "80:80"
+    depends_on:
+      - mysqldb
+    networks:
+      - wallet_pool_net
+
+networks:
+    wallet_pool_net:
+        driver: "bridge"
