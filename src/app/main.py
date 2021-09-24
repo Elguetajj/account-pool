@@ -47,8 +47,8 @@ def read_root():
     return {"Service": "wallet pool"}
 
 
-@app.get("/wallet")
-def get_wallet():
+@app.get("/account")
+def get_account():
     conn = get_db_conn()
     with conn.cursor(pymysql.cursors.DictCursor) as cursor:
         query = "SELECT name,address FROM accounts"
@@ -64,8 +64,26 @@ def get_wallet():
         raise HTTPException(status_code=404, detail= f'No accounts :/') 
 
 
-@app.post("/wallet")
-def post_wallet(account:Account):
+
+@app.get("/account/{node}")
+def get_node_accounts(node):
+    conn = get_db_conn()
+    with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+        query = "SELECT name,address FROM accounts WHERE name LIKE %s "
+        cursor.execute(query,(f'%{node}%'))
+
+    if (results := cursor.fetchall()):
+        conn.close()
+
+        return results
+    else:
+        conn.close()
+
+        raise HTTPException(status_code=404, detail= f'No accounts :/') 
+
+
+@app.post("/account")
+def post_account(account:Account):
     conn = get_db_conn()
     account_dict = account.dict()
 
