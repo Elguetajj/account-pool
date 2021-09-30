@@ -44,15 +44,33 @@ def get_db_conn():
 
 @app.get("/")
 def read_root():
-    return {"Service": "wallet pool"}
+    return {"Service": "account pool"}
 
 
-@app.get("/account")
-def get_account():
+# @app.get("/account")
+# def get_account():
+#     conn = get_db_conn()
+#     with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+#         query = "SELECT name,address FROM accounts"
+#         cursor.execute(query)
+
+#     if (results := cursor.fetchall()):
+#         conn.close()
+
+#         return random.choice(results)
+#     else:
+#         conn.close()
+
+#         raise HTTPException(status_code=404, detail= f'No accounts :/') 
+
+
+
+@app.get("/account/{node}")
+def get_node_accounts(node):
     conn = get_db_conn()
     with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-        query = "SELECT name,address FROM accounts"
-        cursor.execute(query)
+        query = "SELECT name,address FROM accounts WHERE name LIKE %s "
+        cursor.execute(query,(f'%{node}%'))
 
     if (results := cursor.fetchall()):
         conn.close()
@@ -65,7 +83,7 @@ def get_account():
 
 
 
-@app.get("/account/{node}")
+@app.get("/all_accounts/{node}")
 def get_node_accounts(node):
     conn = get_db_conn()
     with conn.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -80,7 +98,6 @@ def get_node_accounts(node):
         conn.close()
 
         raise HTTPException(status_code=404, detail= f'No accounts :/') 
-
 
 @app.post("/account")
 def post_account(account:Account):

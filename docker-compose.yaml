@@ -9,6 +9,7 @@ services:
     container_name: mysql_final
     volumes:
         - ./db/init:/docker-entrypoint-initdb.d/:ro
+        - ./db/data:/var/lib/mysql
     ports:
         - 3306:3306
     networks:
