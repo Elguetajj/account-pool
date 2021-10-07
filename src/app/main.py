@@ -47,21 +47,21 @@ def read_root():
     return {"Service": "account pool"}
 
 
-# @app.get("/account")
-# def get_account():
-#     conn = get_db_conn()
-#     with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-#         query = "SELECT name,address FROM accounts"
-#         cursor.execute(query)
+@app.get("/account")
+def get_account():
+    conn = get_db_conn()
+    with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+        query = "SELECT name,address FROM accounts"
+        cursor.execute(query)
 
-#     if (results := cursor.fetchall()):
-#         conn.close()
+    if (results := cursor.fetchall()):
+        conn.close()
 
-#         return random.choice(results)
-#     else:
-#         conn.close()
+        return random.choice(results)
+    else:
+        conn.close()
 
-#         raise HTTPException(status_code=404, detail= f'No accounts :/') 
+        raise HTTPException(status_code=404, detail= f'No accounts :/') 
 
 
 
@@ -69,8 +69,8 @@ def read_root():
 def get_node_accounts(node):
     conn = get_db_conn()
     with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-        query = "SELECT name,address FROM accounts WHERE name LIKE %s "
-        cursor.execute(query,(f'%{node}%'))
+        query = "SELECT name,address FROM accounts WHERE name LIKE %s"
+        cursor.execute(query,(f'%{node}.%'))
 
     if (results := cursor.fetchall()):
         conn.close()
